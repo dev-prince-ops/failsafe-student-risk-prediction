@@ -25,8 +25,8 @@ def get_shap_explanation(student_data: dict) -> dict:
     risk_score = float(model.predict_proba(X)[0][1])
 
     risk_level = (
-        "High" if risk_score > 0.7
-        else "Medium" if risk_score > 0.4
+        "High" if risk_score > 0.65
+        else "Medium" if risk_score > 0.35
         else "Low"
     )
 
@@ -36,6 +36,18 @@ def get_shap_explanation(student_data: dict) -> dict:
         key=lambda x: abs(x[1]),
         reverse=True
     )[:3]
+    feature_names = {
+                    "failures": "Previous failures",
+                    "absences": "Absences",
+                    "studytime": "Study time",
+                    "freetime": "Free time",
+                    "goout": "Going out frequency",
+                    "Dalc": "Weekday alcohol use",
+                    "Walc": "Weekend alcohol use",
+                    "health": "Health status",
+                    "famrel": "Family relationship",
+                    "traveltime": "Travel time"
+                }
 
     factors = []
 
@@ -46,7 +58,8 @@ def get_shap_explanation(student_data: dict) -> dict:
             "feature": feat,
             "shap_value": round(float(val), 3),
             "impact": direction,
-            "readable": f"{feat} {direction} risk"
+            "readable":
+            f"{feature_names.get(feat, feat)} {direction} risk"
         })
 
     return {
